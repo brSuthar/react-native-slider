@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#D80000',
     justifyContent: 'center',
-    paddingHorizontal: 2,
   },
   line: {
     width: '100%',
