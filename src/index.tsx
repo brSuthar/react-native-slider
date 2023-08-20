@@ -1,18 +1,30 @@
-import React from 'react';
-import {StyleSheet, View, StatusBar} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, StatusBar, Text} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SliderView from './component/slider-view';
 import 'react-native-gesture-handler';
 
 function App(): JSX.Element {
+  const [count, setCount] = useState(1);
   const onCallback = (value: number) => {
-    console.log(value);
+    setCount(value);
   };
+
+  const renderView = (value: number, index: number) => {
+    return (
+      <View key={index} style={styles.infoView}>
+        <View style={styles.pipe} />
+        <Text style={styles.info}>{value}</Text>
+      </View>
+    );
+  };
+
   return (
     <GestureHandlerRootView style={styles.view}>
       <View style={styles.contaienr}>
         <StatusBar barStyle={'light-content'} />
         <SliderView onSlideChange={onCallback} />
+        <View style={styles.rangeView}>{[0, count, 100].map(renderView)}</View>
       </View>
     </GestureHandlerRootView>
   );
@@ -25,24 +37,30 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 46,
   },
   view: {
     width: '100%',
     height: '100%',
   },
-  touchView: {
-    backgroundColor: '#FFC107',
-    height: 52,
-    marginTop: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+  rangeView: {
     width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginTop: 4,
   },
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#FFF',
+  pipe: {
+    width: 1.5,
+    backgroundColor: '#1A73EB',
+    height: 6,
+  },
+  info: {
+    fontSize: 15,
+    color: '#1A73EB',
+    marginTop: 2,
+  },
+  infoView: {
+    alignItems: 'center',
   },
 });
 

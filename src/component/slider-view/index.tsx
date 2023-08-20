@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useState} from 'react';
-import {LayoutChangeEvent, Text, View} from 'react-native';
+import React, {FC, useMemo, useState} from 'react';
+import {LayoutChangeEvent, View} from 'react-native';
 import {styles} from './styles';
 import {
   PanGestureHandler,
@@ -8,7 +8,6 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
-  runOnUI,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -16,7 +15,8 @@ import Animated, {
 import {IContext, ISlideView} from './type';
 
 const SliderView: FC<ISlideView> = (props: ISlideView) => {
-  const {onSlideChange} = props;
+  const {onSlideChange, trackStyle, pitchStyle, controlStyle} = props;
+
   const [layout, setLayout] = useState({height: 0, width: 0});
   const [mainWidth, setMainWidth] = useState(0);
   const slideX = useSharedValue(0);
@@ -31,35 +31,40 @@ const SliderView: FC<ISlideView> = (props: ISlideView) => {
     setMainWidth(width);
   };
 
+  const centerPoint = useMemo(() => {
+    return layout.width / 2;
+  }, [layout.width]);
+
   const onGestureEvent = useAnimatedGestureHandler<GestureTypes, IContext>({
     onStart: (event: PanTypes, context: IContext) => {
       const {x} = event;
-      const {position} = context;
-      if ((position - 18 < x && position + 18 > x) || position === undefined) {
+      const {pointX, pointY} = context;
+      if (
+        (pointX <= x && pointY >= x && x >= 0 && x <= mainWidth) ||
+        pointX === undefined
+      ) {
         context.activity = true;
-        if (x >= 18 && x < mainWidth - 18 && position) {
-          slideX.value = x - 18;
-          context.position = x;
-          console.log('');
-          queueMicrotask(function () {
-            'worklet';
-            runOnJS(onSlideChange)(((x - 18) / (mainWidth - 18)) * 100);
-          });
-        }
+        slideX.value = x;
+        context.pointX = x - centerPoint;
+        context.pointY = x + centerPoint;
+        queueMicrotask(function () {
+          'worklet';
+          runOnJS(onSlideChange)(Math.round((x / mainWidth) * 100));
+        });
       }
     },
     onActive: (event: PanTypes, context) => {
       const {x} = event;
       const {activity} = context;
-      if (activity) {
-        if (x >= 18 && x < mainWidth - 18) {
-          slideX.value = x - 18;
-          context.position = x;
-          queueMicrotask(function () {
-            'worklet';
-            runOnJS(onSlideChange)(((x - 18) / (mainWidth - 18)) * 100);
-          });
-        }
+
+      if (activity && x >= 0 && x <= mainWidth) {
+        slideX.value = x;
+        context.pointX = x - centerPoint;
+        context.pointY = x + centerPoint;
+        queueMicrotask(function () {
+          'worklet';
+          runOnJS(onSlideChange)(Math.round((x / mainWidth) * 100));
+        });
       }
     },
     onFinish: (event: PanTypes, context) => {
@@ -72,19 +77,19 @@ const SliderView: FC<ISlideView> = (props: ISlideView) => {
 
   const activeStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: slideX.value}],
+      transform: [{translateX: slideX.value - centerPoint}],
     };
   });
 
   return (
-    <PanGestureHandler shouldCancelWhenOutside onGestureEvent={onGestureEvent}>
+    <PanGestureHandler onGestureEvent={onGestureEvent}>
       <Animated.View
         onLayout={onMainLayout}
-        style={[styles.container, {height: layout.height}]}>
-        <View style={styles.line} />
+        style={[styles.container, {height: layout.height}, trackStyle]}>
+        <View style={[styles.line, pitchStyle]} />
         <Animated.View
           onLayout={onLayoutChanged}
-          style={[styles.view, activeStyle]}
+          style={[styles.view, activeStyle, controlStyle]}
         />
       </Animated.View>
     </PanGestureHandler>
