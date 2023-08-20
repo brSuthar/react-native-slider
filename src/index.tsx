@@ -3,6 +3,7 @@ import {StyleSheet, View, StatusBar, Text} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SliderView from './component/slider-view';
 import 'react-native-gesture-handler';
+import CardInput from './component/card-input';
 
 function App(): JSX.Element {
   const [count, setCount] = useState(0);
@@ -29,6 +30,7 @@ function App(): JSX.Element {
         />
         <SliderView onSlideChange={onCallback} />
         <View style={styles.rangeView}>{[0, count, 100].map(renderView)}</View>
+        <CardInput/>
       </View>
     </GestureHandlerRootView>
   );
