@@ -5,7 +5,7 @@ import SliderView from './component/slider-view';
 import 'react-native-gesture-handler';
 
 function App(): JSX.Element {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const onCallback = (value: number) => {
     setCount(value);
   };
@@ -22,7 +22,11 @@ function App(): JSX.Element {
   return (
     <GestureHandlerRootView style={styles.view}>
       <View style={styles.contaienr}>
-        <StatusBar barStyle={'light-content'} />
+        <StatusBar
+          translucent
+          backgroundColor={'#010B40'}
+          barStyle={'light-content'}
+        />
         <SliderView onSlideChange={onCallback} />
         <View style={styles.rangeView}>{[0, count, 100].map(renderView)}</View>
       </View>
