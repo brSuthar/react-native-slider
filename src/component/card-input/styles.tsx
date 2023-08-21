@@ -30,4 +30,8 @@ export const styles = StyleSheet.create({
     height: 0,
     zIndex: -1,
   },
+  text: {
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
 });
