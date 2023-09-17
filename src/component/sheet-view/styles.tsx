@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
   container: {
     width: width,
     height: 400,
-    // backgroundColor: 'blue',
     position: 'absolute',
     bottom: 0,
     justifyContent: 'flex-end',
