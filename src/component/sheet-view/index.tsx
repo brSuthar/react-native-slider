@@ -11,8 +11,8 @@ import {Dimensions} from 'react-native';
 const screenHeight = Dimensions.get('screen').height;
 
 const SheetView = () => {
-  const animatedHeight = useSharedValue(400);
-  const animatedMain = useSharedValue(400);
+  const animatedHeight = useSharedValue((screenHeight / 100) * 20);
+  const animatedMain = useSharedValue((screenHeight / 100) * 20);
   const onGestureHandler = useAnimatedGestureHandler({
     onActive: event => {
       console.log('ActiveEvent: ', screenHeight - event.absoluteY);

@@ -12,6 +12,6 @@ export const styles = StyleSheet.create({
   },
   view: {
     width: '100%',
-    backgroundColor: 'yellow',
+    backgroundColor: '#031094',
   },
 });
