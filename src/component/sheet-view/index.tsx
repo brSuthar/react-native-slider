@@ -2,9 +2,11 @@ import React, {useState} from 'react';
 import {styles} from './styles';
 import {PanGestureHandler} from 'react-native-gesture-handler';
 import Animated, {
+  Easing,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 import {Dimensions} from 'react-native';
 
@@ -14,14 +16,24 @@ const SheetView = () => {
   const animatedHeight = useSharedValue((screenHeight / 100) * 20);
   const animatedMain = useSharedValue((screenHeight / 100) * 20);
   const onGestureHandler = useAnimatedGestureHandler({
-    onActive: event => {
-      console.log('ActiveEvent: ', screenHeight - event.absoluteY);
-      animatedHeight.value = screenHeight - event.absoluteY;
+    onStart: (event, context) => {
+      context.start = event.absoluteY;
     },
-    onFinish: event => {
-      if (event.absoluteY < (screenHeight / 100) * 60) {
-        animatedMain.value = (screenHeight / 100) * 70;
-        animatedHeight.value = (screenHeight / 100) * 70;
+    onActive: event => {
+      // console.log('ActiveEvent: ', screenHeight - event.absoluteY);
+      if (event.absoluteY < (screenHeight / 100) * 80) {
+        animatedHeight.value = screenHeight - event.absoluteY;
+      }
+    },
+    onFinish: (event, context: any) => {
+      if (event.absoluteY < context.start) {
+        const timeConfig = {
+          duration: 130,
+          easing: Easing.linear,
+        };
+        const range = (screenHeight / 100) * 70;
+        animatedMain.value = withTiming(range, timeConfig);
+        animatedHeight.value = withTiming(range, timeConfig);
       } else {
         animatedMain.value = (screenHeight / 100) * 20;
         animatedHeight.value = (screenHeight / 100) * 20;

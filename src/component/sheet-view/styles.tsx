@@ -5,7 +5,6 @@ const width = Dimensions.get('screen').width;
 export const styles = StyleSheet.create({
   container: {
     width: width,
-    height: 400,
     position: 'absolute',
     bottom: 0,
     justifyContent: 'flex-end',
